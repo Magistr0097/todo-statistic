@@ -16,8 +16,8 @@ function GetTodos(files) {
     const todos = [];
     for (const file of files) {
         for (const line of file.split('\r\n')) {
-            if (line.startsWith('// TODO')) {
-                todos.push(line);
+            if (line.includes('// TODO')) {
+                todos.push(line.substr(line.indexOf('// TODO')));
             }
         }
     }
