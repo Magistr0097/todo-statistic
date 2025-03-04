@@ -64,18 +64,17 @@ function GetSortedTodosByImportance() {
     return importantTodos;
 }
 
-function GetGroupedUsers(){
+function GetGroupedUsers() {
     const todos = GetTodos(files);
     const dict = {};
     for (const todo of todos) {
-        let user = todo.split(';')[0].substr(8);
-        if (!todo.includes(';'))
-        {
+        let spl = todo.split(';');
+        let user = spl[0].substr(8);
+        if (!todo.includes(';') || spl.length < 3) {
             if (!("" in dict))
                 dict[""] = [];
             dict[""].push(todo);
-        }
-        else{
+        } else {
             if (!(user in dict))
                 dict[user] = [];
             dict[user].push(todo);
@@ -85,12 +84,42 @@ function GetGroupedUsers(){
     return dict;
 }
 
-function PrintDict(dict){
+function PrintDict(dict) {
     for (const key in dict) {
         console.log(key + ':');
         for (const todo of dict[key]) {
             console.log(todo);
         }
+        console.log()
+    }
+}
+
+
+function GetSortedTodosByDate() {
+    const todos = GetTodos(files);
+
+    let withDate = [];
+    let withoutDate = [];
+    for (const todo of todos) {
+        let spl = todo.split(';');
+        if (spl.length >= 3) {
+            withDate.push([todo, new Date(spl[1].substr(1))]);
+        } else {
+            withoutDate.push(todo);
+        }
+    }
+
+    withDate.sort((a, b) => a[1] - b[1]);
+    return [withDate, withoutDate];
+}
+
+function PrintDates([withDates, withoutDates]) {
+    for (const withDate of withDates) {
+        console.log(withDate[0]);
+    }
+    console.log()
+    for (const withoutDate of withoutDates) {
+        console.log(withoutDate);
     }
 }
 
@@ -120,6 +149,9 @@ function processCommand(command) {
             break;
         case 'sort user':
             PrintDict(GetGroupedUsers());
+            break;
+        case 'sort date':
+            PrintDates(GetSortedTodosByDate());
             break;
         default:
             console.log('wrong command');
