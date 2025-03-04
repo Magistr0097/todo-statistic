@@ -64,6 +64,35 @@ function GetSortedTodosByImportance() {
     return importantTodos;
 }
 
+function GetGroupedUsers(){
+    const todos = GetTodos(files);
+    const dict = {};
+    for (const todo of todos) {
+        let user = todo.split(';')[0].substr(8);
+        if (!todo.includes(';'))
+        {
+            if (!("" in dict))
+                dict[""] = [];
+            dict[""].push(todo);
+        }
+        else{
+            if (!(user in dict))
+                dict[user] = [];
+            dict[user].push(todo);
+        }
+    }
+
+    return dict;
+}
+
+function PrintDict(dict){
+    for (const key in dict) {
+        console.log(key + ':');
+        for (const todo of dict[key]) {
+            console.log(todo);
+        }
+    }
+}
 
 function processCommand(command) {
 
@@ -88,6 +117,9 @@ function processCommand(command) {
             break;
         case 'sort importance':
             PrintArray(GetSortedTodosByImportance());
+            break;
+        case 'sort user':
+            PrintDict(GetGroupedUsers());
             break;
         default:
             console.log('wrong command');
